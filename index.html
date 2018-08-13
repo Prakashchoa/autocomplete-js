@@ -1,0 +1,78 @@
+<html>
+	<head>
+
+	</head>
+	<body>
+
+		<style>
+
+			.searchContainer-style{
+				position: absolute;
+    			border: 1px solid #d4d4d4;
+			    border-bottom: none;
+    			border-top: none;
+				width: 180px;
+				z-index: 99;				
+				left: 0;
+				right: 0;
+			}
+			.searchList-style {
+			    padding: 10px;    			
+    			background-color: #fff;
+    			border-bottom: 1px solid #d4d4d4;
+			}
+		</style>
+
+		<div id="container">
+			<input id="auto_txt"  type="text" placeholder="type" />
+			<input type="button" value="Search" />
+		</div>
+
+		<script>		
+
+			function autocomplete(input){
+				input.addEventListener("input", function(e){					
+					var currentVal = this.value;
+					var countryList = [];
+					_this = this;
+					clearSearchList();
+					if(!this.value) return;
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+						if (this.readyState == 4 && this.status == 200) {
+							countryList = JSON.parse(this.responseText);							
+							
+							var searchContainer = document.createElement("div");
+							searchContainer.setAttribute("id", "searchContainer");
+							searchContainer.setAttribute("class", "searchContainer-style");
+							_this.parentNode.append(searchContainer);
+							
+							for(var i = 0; i < countryList.length; i++){
+								if(countryList[i].title.substr(0,currentVal.length).toLowerCase() == currentVal.toLowerCase()){
+									var searchList = document.createElement("div");
+									searchList.setAttribute("class", "searchList-style");
+									searchList.innerHTML =  countryList[i].title;
+									searchContainer.append(searchList);
+								}
+							}
+						}
+					};
+					xhttp.open("GET", "https://jsonplaceholder.typicode.com/posts/", true);
+					xhttp.send();					
+				})
+			}
+
+			function clearSearchList(){
+				var searchContainer = document.getElementsByClassName("searchContainer-style");				
+				for(var i = 0; i < searchContainer.length; i++){
+					searchContainer[i].parentNode.removeChild(searchContainer[i]);
+				}
+			}
+			autocomplete(document.getElementById("auto_txt"));
+			
+		
+		</script>
+		
+	</body>
+</html>
+
